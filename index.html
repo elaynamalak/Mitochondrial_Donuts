@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>3D Timelapse Models with Videos</title>
+
+<!-- Google Model Viewer -->
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+<style>
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: sans-serif;
+  margin: 20px;
+  background: #fafafa;
+}
+
+h1 {
+  margin-bottom: 15px;
+}
+
+.category-buttons {
+  margin-bottom: 20px;
+}
+
+.label {
+  font-weight: bold;
+  margin: 10px 0 5px;
+}
+
+.timepoint-buttons,
+.dose-buttons,
+.control-buttons,
+.model-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+button {
+  margin: 0 5px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 2px solid #bbb;
+  background: #e6e6e6;
+  color: #222;
+}
+
+/* ACTIVE BUTTON */
+button.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+model-viewer {
+  width: 90vw;
+  max-width: 800px;
+  height: 600px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+.video-container {
+  width: 90vw;
+  max-width: 450px;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.video-container iframe {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.model-description {
+  max-width: 800px;
+  margin-bottom: 20px;
+  font-size: 1.05rem;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #ddd;
+}
+
+@media (max-width: 768px) {
+  model-viewer {
+    height: 400px;
+  }
+  button {
+    padding: 10px 14px;
+    font-size: 1.05rem;
+  }
+}
+</style>
+</head>
+<body>
+<h1>3D Timelapse Models with Videos</h1>
+
+<!-- TOP CATEGORY SWITCH -->
+<div class="category-buttons">
+  <button id="videosBtn">Videos</button>
+  <button id="modelsBtn">3D Models</button>
+</div>
+
+<!-- ===================== -->
+<!-- VIDEOS SECTION -->
+<!-- ===================== -->
+<div id="videos-section">
+  <div class="label">Choose Video Type</div>
+  <div class="control-buttons">
+    <button id="formationBtn">Formation</button>
+    <button id="dissolutionBtn">Dissolution</button>
+    <button id="dynamicBtn">Dynamic</button>
+  </div>
+
+<div id="formationVideo" class="video-container">
+  <iframe src="https://www.youtube.com/embed/pM2gTRgaQTQ" allowfullscreen></iframe>
+</div>
+
+<div id="dissolutionVideo" class="video-container">
+  <iframe src="https://www.youtube.com/embed/qsO8QkXQbwI" allowfullscreen></iframe>
+</div>
+
+<div id="dynamicVideo" class="video-container">
+  <iframe src="https://www.youtube.com/embed/8l_oygUWzW4" allowfullscreen></iframe>
+</div>
+
+</div>
+
+<!-- ===================== -->
+<!-- 3D MODELS SECTION -->
+<!-- ===================== -->
+<div id="models-section" style="display:none;">
+  <div class="label">Choose a Model</div>
+  <div class="model-buttons" id="model-buttons"></div>
+
+  <model-viewer id="viewer" src="" alt="3D model" camera-controls auto-rotate shadow-intensity="1" exposure="1" touch-action="pan-y">
+  </model-viewer>
+
+  <div id="model-description" class="model-description">
+    Click a model to view its description.
+  </div>
+</div>
+
+<script>
+const videosSection = document.getElementById('videos-section');
+const modelsSection = document.getElementById('models-section');
+
+const videosBtn = document.getElementById('videosBtn');
+const modelsBtn = document.getElementById('modelsBtn');
+
+const formationBtn = document.getElementById('formationBtn');
+const dissolutionBtn = document.getElementById('dissolutionBtn');
+const dynamicBtn = document.getElementById('dynamicBtn');
+
+const formationVideo = document.getElementById('formationVideo');
+const dissolutionVideo = document.getElementById('dissolutionVideo');
+const dynamicVideo = document.getElementById('dynamicVideo');
+
+const viewer = document.getElementById('viewer');
+const modelButtonsDiv = document.getElementById('model-buttons');
+const modelDescription = document.getElementById('model-description');
+
+// Category buttons
+videosBtn.onclick = () => {
+  videosSection.style.display = "block";
+  modelsSection.style.display = "none";
+  videosBtn.classList.add("active");
+  modelsBtn.classList.remove("active");
+};
+
+modelsBtn.onclick = () => {
+  videosSection.style.display = "none";
+  modelsSection.style.display = "block";
+  modelsBtn.classList.add("active");
+  videosBtn.classList.remove("active");
+};
+
+// Video Buttons
+formationBtn.onclick = () => {
+  hideAllVideos();
+  formationVideo.style.display = "block";
+  setActiveVideoButton(formationBtn);
+};
+
+dissolutionBtn.onclick = () => {
+  hideAllVideos();
+  dissolutionVideo.style.display = "block";
+  setActiveVideoButton(dissolutionBtn);
+};
+
+dynamicBtn.onclick = () => {
+  hideAllVideos();
+  dynamicVideo.style.display = "block";
+  setActiveVideoButton(dynamicBtn);
+};
+
+function hideAllVideos() {
+  formationVideo.style.display = "none";
+  dissolutionVideo.style.display = "none";
+  dynamicVideo.style.display = "none";
+}
+
+function setActiveVideoButton(btn) {
+  document.querySelectorAll('.control-buttons button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// Models list (3 models)
+const models = [
+  { name: "Model 1", file: "models/300_24HR_donuts.glb", desc: "300 uM Cisplatin with 24 Hours Recovery." },
+  { name: "Model 2", file: "models/30_24HR_donuts.glb", desc: "30 uM Cisplatin with 24 Hours Recovery." },
+  { name: "Model 3", file: "models/30_6HR_donuts.glb", desc: "30 uM Cisplatin with 6 Hours Recovery." }
+];
+
+models.forEach((model, idx) => {
+  const btn = document.createElement('button');
+  btn.textContent = model.name;
+  btn.onclick = () => {
+    viewer.src = model.file;
+    modelDescription.textContent = model.desc;
+    setActiveModelButton(btn);
+  };
+  if (idx === 0) btn.classList.add('active');
+  modelButtonsDiv.appendChild(btn);
+});
+
+function setActiveModelButton(btn) {
+  document.querySelectorAll('.model-buttons button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// initial state
+videosBtn.classList.add("active");
+formationBtn.classList.add("active");
+formationVideo.style.display = "block";
+</script>
+</body>
+</html>
